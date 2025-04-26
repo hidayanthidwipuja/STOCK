@@ -69,19 +69,35 @@ require 'cek.php';
                                 <table id="datatablesSimple">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
+                                            <th>Tanggal</th>
                                             <th>Nama Barang</th>
-                                            <th>Deskripsi</th>
-                                            <th>Stock</th>
+                                            <th>Jumlah</th>
+                                            <th>Penerima</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+
+
+                                    <?php
+                                        $ambilsemuadatastock = mysqli_query($conn,"select * from keluar k, stock s where s.idbarang = k.idbarang");
+                                        while($data = mysqli_fetch_array($ambilsemuadatastock)){
+                                            $tanggal = $data['tanggal'];
+                                            $namabarang = $data['namabarang'];
+                                            $qty = $data['qty'];
+                                            $penerima = $data['penerima'];
+
+                                        ?>
                                         <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
+                                            <td><?=$tanggal;?></td>
+                                            <td><?=$namabarang;?></td>
+                                            <td><?=$qty;?></td>
+                                            <td><?=$penerima;?></td>
                                         </tr>
+                                        <?php
+                                        };
+
+                                        ?>
+
                                     </tbody>
                                 </table>
                             </div>
@@ -143,7 +159,7 @@ require 'cek.php';
             <br> 
             <input type="text" name="penerima" placeholder="Penerima" class="form-control" required>
             <br>
-            <button type="submit" class="btn btn-primary" name="adbarangkeluar">Submit</button>
+            <button type="submit" class="btn btn-primary" name="addbarangkeluar">Submit</button>
             </div>
             </form>
             
