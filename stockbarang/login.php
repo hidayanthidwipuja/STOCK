@@ -2,26 +2,31 @@
 require 'function.php';
 
 //cek login apakah terdaftar
-if(isset($_POST['login'])){
+if (isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    //cocokin dengan  database, cari apakah ada atau tidak
-    $cekdatabase = mysqli_query($conn, "SELECT * FROM login where email='$email' and password='$password'");
-    //hitung jumlah data
-    $hitung = mysqli_num_rows($cekdatabase); //menghitung jumlah barisnya dari si cek database
+    // Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM login WHERE email = ? AND password = ?");
+    $stmt->bind_param("ss", $email, $password); // "ss" means both parameters are strings
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if($hitung>0){
-        $_SESSION['log'] = 'True';
-        header('location:index.php');
-    }else {
-        header('location:login.php'); //untuk balik lagi ke menu login
-    };
-};
+    // Check if any row matched
+    if ($result->num_rows > 0) {
+        $idUser=$result->fetch_assoc();
+        $_SESSION['log'] = true;
+        $_SESSION['id'] = $idUser['iduser'];
+        $_SESSION['rl'] = $idUser['role'];
+        header('Location: index.php');
+        exit;
+    } else {
+        header('Location: login.php');
+        exit;
+    }
+}
 
-if(!isset($_SESSION['log'])){
-
-}else{
+if(isset($_SESSION['log'])){
     header('location:index.php');
 }
 
@@ -37,8 +42,16 @@ if(!isset($_SESSION['log'])){
         <title>Login</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            body{
+                background-image: url("assets/img/wp.png");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+        </style>
     </head>
-    <body class="bg-primary">
+    <body>
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
